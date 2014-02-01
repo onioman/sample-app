@@ -4,6 +4,7 @@ ruby '1.9.3'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.0'
 gem 'bootstrap-sass', '2.3.2.0'
+#gem 'bcrypt-ruby', '3.1.2'
 gem 'pg', '0.15.1'
 
 group :development, :test do
@@ -63,7 +64,7 @@ end
 
 
 # Use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+gem 'bcrypt-ruby', '~> 3.0.0'
 
 # Use unicorn as the app server
 # gem 'unicorn'
