@@ -1,9 +1,12 @@
 include ApplicationHelper
-#def full_title(page_title)
-#	base_title = "Ruby on Rails Tutorial Sample App"
-#	if page_title.empty?
-#		base_title
-#	else
-#		"#{base_title} | #{page_title}"
-#	end
-#end
+def no_blank(attribute)
+	"#{attribute} can't be blank"
+end
+
+def invalid(attribute)
+	"#{attribute} is invalid"
+end
+
+def too_short(attribute)
+	"#{attribute} is too short"
+end
