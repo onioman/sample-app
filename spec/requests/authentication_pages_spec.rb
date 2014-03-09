@@ -40,6 +40,8 @@ describe "Authentication" do
 	  describe "followed by signout" do
 	    before { click_link "Sign out" }
 		it { should have_link('Sign in') }
+		it { should_not have_link('Profile', 	href: user_path(user)) }
+		it { should_not have_link('Settings', 	href: edit_user_path(user)) }
 	  end
 	end
   end
@@ -59,6 +61,20 @@ describe "Authentication" do
 		describe "after signing in" do
 		  it "should render the desired protected page" do
 		    expect(page).to have_title('Edit user')
+		  end
+		end
+
+		describe "when signing in again" do
+		  before do
+		    click_link "Sign out"
+			visit signin_path
+			fill_in "Email", 	with: user.email
+			fill_in "Password", with: user.password
+			click_button "Sign in"
+		  end
+
+		  it "should render the default (profile) page" do
+		    expect(page).to have_title(user.name)
 		  end
 		end
 	  end
@@ -98,6 +114,18 @@ describe "Authentication" do
 	  end
 	end
 
+	describe "as admin user" do
+	  let(:admin) { FactoryGirl.create(:admin) }
+
+	  before { sign_in admin, no_capybara: true }
+
+	  it "should not be able to delete itself" do
+		expect do
+			delete user_path(admin)
+		end.to change(User, :count).by(0)
+	  end
+	end
+
 	describe "as non-admin user" do
 	  let(:user) { FactoryGirl.create(:user) }
 	  let(:non_admin) { FactoryGirl.create(:user) }
@@ -108,6 +136,18 @@ describe "Authentication" do
 	    before { delete user_path(user) }
 		specify { expect(response).to redirect_to(root_url) }
 	  end
+
+	  describe "sumitting a get request to the User#new action" do
+	    before { get signup_path }
+		specify { expect(response).to redirect_to(root_url) }
+	  end
+
+	  describe "sumitting a POST requesto to the Users#create action" do
+		let(:user_params) { {'user' => { "name" => "pepe"} } }
+	    before { post users_path(user_params) }
+		specify { expect(response).to redirect_to(root_url) }
+	  end
+
 	end
   end
 end
