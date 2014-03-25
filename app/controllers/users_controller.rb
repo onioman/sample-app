@@ -12,6 +12,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+	@microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def new
@@ -52,13 +53,6 @@ class UsersController < ApplicationController
 								   :password_confirmation)
 	end
 	# before filters
-	def signed_in_user
-	  unless signed_in?
-	    store_location
-	  	redirect_to signin_url, notice: "Please sign in."
-	  end
-	end
-
 	def not_signed_in
 		if signed_in?
 			redirect_to root_url
@@ -71,6 +65,7 @@ class UsersController < ApplicationController
 	end
 
 	def admin_user
-	  redirect_to(root_url) unless current_user.admin? and current_user?(@user)
+	  @user = User.find(params[:id])
+	  redirect_to(root_url) unless current_user.admin? and not current_user?(@user)
 	end
 end
