@@ -18,16 +18,41 @@ describe "Static pages" do
 
 		describe "for signed-in users" do
 			let(:user) { FactoryGirl.create(:user) }
+			let(:first) { FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum") }
+			
 			before do
 				FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
-				FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
 				sign_in user
 				visit root_path
 			end
 
-			it "should render the user's feed" do
-				user.feed.each do |item|
-					expect(page).to have_selector("li##{item.id}", text: item.content)
+			it { should have_content("1 micropost") }
+
+			describe "with only one microposts" do
+				before do
+					FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+					visit root_path
+				end
+				it "should render the user's feed" do
+					user.feed.each do |item|
+						expect(page).to have_selector("li##{item.id}", text: item.content)
+					end
+				end
+
+				it { should have_content("2 microposts") }
+			end
+
+			describe "pagination" do
+				before do 
+					30.times { FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet") }
+					visit root_path
+				end
+
+			  	it { should have_selector('div.pagination') }
+				it "should render first page" do
+					user.feed.paginate(page: 1).each do |item|
+						expect(page).to have_selector("li##{item.id}", text: item.content)
+					end
 				end
 			end
 		end
