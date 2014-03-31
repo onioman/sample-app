@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "User pages" do
   subject { page }
 
-
   	describe "following/followers" do
 		let(:user) { FactoryGirl.create(:user) }
 		let(:other_user) { FactoryGirl.create(:user) }

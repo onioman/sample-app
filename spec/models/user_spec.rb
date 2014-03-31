@@ -28,6 +28,20 @@ describe User do
   it { should be_valid }
   it { should_not be_admin }
 
+  	describe "follow associations" do
+		let(:followed_user) { FactoryGirl.create(:user) }
+		before do
+			@user.save
+	    	@user.follow!(followed_user)
+		end
+		it "should destroy associattions" do
+			id = @user.id
+			expect(Relationship.where(follower_id: id)).not_to be_empty
+			@user.destroy
+			expect(Relationship.where(follower_id: id)).to be_empty
+		end
+  	end
+
   describe "micropost associations" do
     before { @user.save }
 	let!(:older_micropost) do
